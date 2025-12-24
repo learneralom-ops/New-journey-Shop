@@ -420,7 +420,7 @@
                 document.getElementById('orders-list').innerHTML = data.map(o => `
                     <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px">
                         <p><strong>Order ID:</strong> ${o.orderId}</p>
-                        <p><strong>Total:</strong> $${o.totalAmount}</p>
+                        <p><strong>Total:</strong> ৳${o.totalAmount}</p>
                         <p><strong>Status:</strong> ${o.status}</p>
                     </div>
                 `).join('');
