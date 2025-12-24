@@ -43,48 +43,40 @@
         }
 
         /* Sections */
-        section { display: none; padding: 0px; max-width: 100%; margin: 0 auto; }
+        section { display: none; padding: 15px; max-width: 100%; margin: 0 auto; }
         section.active { display: block; }
 
         /* Slider */
-        .slider-container { width: 100%; height: 150px; border-radius: 0px; overflow: hidden; position: relative; margin-bottom: 10px; }
+        .slider-container { width: 100%; height: 180px; overflow: hidden; position: relative; margin-bottom: 15px; background: #ddd; }
         .slide { width: 100%; height: 100%; background-size: cover; background-position: center; transition: 0.5s; display: none; }
         .slide.active { display: flex; align-items: center; justify-content: center; }
-        .fallback-slide { background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; }
-        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; padding: 10px; cursor: pointer; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; padding: 10px; cursor: pointer; z-index: 10; }
         .next { right: 0; }
 
         /* Category Bubbles */
-        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
-        .category-pill {
-            padding: 8px 18px; border-radius: 20px; white-space: nowrap; 
-            cursor: pointer; font-size: 0.9rem; color: white; border: none;
-        }
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 15px; scrollbar-width: none; }
+        .category-pill { padding: 8px 18px; border-radius: 20px; white-space: nowrap; cursor: pointer; font-size: 0.85rem; color: white; border: none; font-weight: 600; }
 
-        /* Product Grid - Mobile 2 Columns */
-        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        /* Product Grid */
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
         @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
 
-        .product-card { background: var(--white); border-radius: 12px; padding: 10px; box-shadow: var(--shadow); position: relative; }
-        .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
-        .product-card h3 { font-size: 0.9rem; margin: 8px 0; }
-        .price { color: var(--primary); font-weight: 600; }
-        .card-actions { display: flex; justify-content: space-between; margin-top: 10px; }
-        .btn-icon { background: #f1f5f9; border: none; padding: 8px; border-radius: 8px; cursor: pointer; }
-
+        .product-card { background: var(--white); border-radius: 12px; padding: 10px; box-shadow: var(--shadow); position: relative; display: flex; flex-direction: column; }
+        .product-card img { width: 100%; height: 130px; object-fit: cover; border-radius: 8px; margin-bottom: 8px; }
+        .product-card h3 { font-size: 0.85rem; height: 38px; overflow: hidden; margin-bottom: 5px; }
+        .price { color: var(--primary); font-weight: 700; margin-bottom: 10px; }
+        
         /* Modals */
-        .modal { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
-            display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;
-        }
-        .modal-content { background: var(--white); padding: 20px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px; }
+        .modal-content { background: var(--white); padding: 20px; border-radius: 15px; width: 100%; max-width: 450px; max-height: 90vh; overflow-y: auto; }
         .form-group { margin-bottom: 15px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.9rem; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; font-weight: 600; transition: 0.3s; }
+        .btn-primary:active { transform: scale(0.98); }
 
-        /* Specific Views */
-        .cart-item { display: flex; gap: 15px; background: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; align-items: center; }
-        .cart-item img { width: 60px; height: 60px; border-radius: 5px; }
+        /* Cart View */
+        .cart-item { display: flex; gap: 15px; background: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; align-items: center; box-shadow: var(--shadow); }
+        .cart-item img { width: 50px; height: 50px; border-radius: 5px; object-fit: cover; }
     </style>
 </head>
 <body>
@@ -93,13 +85,15 @@
         <div class="logo">Arifa Smart Shop</div>
         <div style="display: flex; align-items: center; gap: 15px;">
             <div id="login-status-indicator" title="Logged In"></div>
-            <i class="fas fa-search" onclick="location.hash='#search'"></i>
+            <i class="fas fa-search" onclick="location.hash='#search'" style="cursor: pointer;"></i>
         </div>
     </header>
 
     <section id="home" class="active">
         <div class="slider-container" id="slider">
-            <div class="slide fallback-slide active"><h1>Arifa Smart Shop</h1></div>
+            <div class="slide active" style="background: linear-gradient(45deg, #2563eb, #f59e0b); color: white; display: flex; align-items: center; justify-content: center;">
+                <h2>Welcome to Arifa Shop</h2>
+            </div>
             <button class="slider-btn prev" onclick="moveSlider(-1)">❮</button>
             <button class="slider-btn next" onclick="moveSlider(1)">❯</button>
         </div>
@@ -109,40 +103,24 @@
 
     <section id="search">
         <div class="form-group">
-            <input type="text" id="search-input" placeholder="Search products...">
+            <input type="text" id="search-input" placeholder="Search for products...">
         </div>
         <div class="product-grid" id="search-results"></div>
     </section>
 
     <section id="cart">
-        <h2>Your Cart</h2>
+        <h2 style="margin-bottom: 15px;">Shopping Cart</h2>
         <div id="cart-list"></div>
-        <div id="cart-summary" style="margin-top:20px; text-align:right;">
-            <h3>Total: ৳<span id="cart-total">0</span></h3>
-            <button class="btn-primary" onclick="openCheckout()" style="margin-top:10px">Proceed to Checkout</button>
+        <div id="cart-empty-msg" style="display:none; text-align:center; padding:40px;">Your cart is empty!</div>
+        <div id="cart-summary" style="margin-top:20px; text-align:right; border-top: 2px solid #eee; padding-top: 15px;">
+            <h3 style="margin-bottom: 10px;">Total: ৳<span id="cart-total">0</span></h3>
+            <button class="btn-primary" onclick="openCheckout()">Proceed to Checkout</button>
         </div>
     </section>
 
-    <section id="wishlist">
-        <h2>Wishlist</h2>
-        <div id="wishlist-list" class="product-grid"></div>
-    </section>
-
-    <section id="orders">
-        <h2>My Orders</h2>
-        <div id="orders-list"></div>
-    </section>
-
-    <section id="about"><h2>About Us</h2><p>Your premium e-commerce destination.</p></section>
-    <section id="contact">
-        <h2>Contact Us</h2>
-        <form id="contact-form" style="margin-top:20px">
-            <div class="form-group"><input type="text" placeholder="Name" required id="c-name"></div>
-            <div class="form-group"><input type="email" placeholder="Email" required id="c-email"></div>
-            <div class="form-group"><textarea placeholder="Message" rows="5" required id="c-msg"></textarea></div>
-            <button class="btn-primary" type="submit">Send Message</button>
-        </form>
-    </section>
+    <section id="wishlist"><h2>Wishlist</h2><div id="wishlist-list" class="product-grid"></div></section>
+    <section id="orders"><h2>My Orders</h2><div id="orders-list"></div></section>
+    <section id="about"><h2>About Us</h2><p>Your premium e-commerce destination in Bangladesh.</p></section>
 
     <nav class="bottom-nav">
         <a href="#home" class="nav-item active"><i class="fas fa-home"></i><div>Home</div></a>
@@ -158,36 +136,47 @@
                 <div class="form-group"><input type="email" id="auth-email" placeholder="Email" required></div>
                 <div class="form-group"><input type="password" id="auth-pass" placeholder="Password" required></div>
                 <button class="btn-primary" type="submit" id="auth-btn">Login</button>
-                <p style="margin-top:10px; text-align:center; font-size:0.9rem">
+                <p style="margin-top:15px; text-align:center; font-size:0.9rem">
                     <span id="auth-toggle" style="color:var(--primary); cursor:pointer">Don't have an account? Register</span>
                 </p>
             </form>
-            <button onclick="closeModals()" style="margin-top:10px; background:none; border:none; width:100%">Close</button>
+            <button onclick="closeModals()" style="margin-top:15px; background:none; border:none; width:100%; color: #666;">Cancel</button>
+        </div>
+    </div>
+
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <h2 style="margin-bottom: 15px;">Shipping & Payment</h2>
+            <form id="checkout-form">
+                <div class="form-group"><input type="text" id="ship-name" placeholder="Full Name" required></div>
+                <div class="form-group"><textarea id="ship-addr" placeholder="Shipping Address (e.g., Area, Road, House No)" required></textarea></div>
+                
+                <div style="background: #f1f5f9; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+                    <p style="font-size: 0.9rem; margin-bottom: 8px; font-weight: 600;">Payment Method:</p>
+                    <select id="pay-method" onchange="showPaymentInfo()">
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="Bkash">bKash (Personal)</option>
+                        <option value="Nagad">Nagad (Personal)</option>
+                    </select>
+                </div>
+
+                <div id="payment-details" style="display:none; background: #fff3cd; padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ffeeba; font-size: 0.85rem;">
+                    <p id="payment-instruction" style="margin-bottom: 10px;"></p>
+                    <div class="form-group" style="margin-bottom: 0;"><input type="text" id="tran-id" placeholder="TrxID or Last 4 Digits"></div>
+                </div>
+
+                <button class="btn-primary" type="submit">Place Order Now</button>
+                <button type="button" class="btn-primary" style="background:var(--secondary); margin-top:10px" onclick="closeModals()">Back</button>
+            </form>
         </div>
     </div>
 
     <div class="modal" id="menu-modal">
         <div class="modal-content">
-            <div id="menu-links"></div>
-            <hr style="margin:15px 0">
-            <a href="#about" onclick="closeModals()">About Us</a><br><br>
-            <a href="#contact" onclick="closeModals()">Contact Us</a><br><br>
-            <button class="btn-primary" onclick="closeModals()">Back</button>
-        </div>
-    </div>
-
-    <div class="modal" id="product-modal">
-        <div class="modal-content" id="product-detail-content"></div>
-    </div>
-
-    <div class="modal" id="checkout-modal">
-        <div class="modal-content">
-            <h2>Shipping Details</h2>
-            <form id="checkout-form">
-                <div class="form-group"><input type="text" id="ship-name" placeholder="Full Name" required></div>
-                <div class="form-group"><textarea id="ship-addr" placeholder="Full Address" required></textarea></div>
-                <button class="btn-primary" type="submit">Place Order</button>
-            </form>
+            <div id="menu-links" style="font-weight: 600;"></div>
+            <hr style="margin:15px 0; border-top: 1px solid #eee;">
+            <a href="#about" onclick="closeModals()" style="text-decoration: none; color: var(--dark);">About Us</a><br><br>
+            <button class="btn-primary" onclick="closeModals()">Close Menu</button>
         </div>
     </div>
 
@@ -197,14 +186,14 @@
         import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
         const firebaseConfig = {
-  apiKey: "AIzaSyDbc54ZsWBXFqX50KvY85kbHkUo_Ct5hLk",
-  authDomain: "arifa-shop.firebaseapp.com",
-  databaseURL: "https://arifa-shop-default-rtdb.firebaseio.com",
-  projectId: "arifa-shop",
-  storageBucket: "arifa-shop.firebasestorage.app",
-  messagingSenderId: "792267788402",
-  appId: "1:792267788402:web:96dd32886699ff188472eb"
-};
+            apiKey: "AIzaSyDbc54ZsWBXFqX50KvY85kbHkUo_Ct5hLk",
+            authDomain: "arifa-shop.firebaseapp.com",
+            databaseURL: "https://arifa-shop-default-rtdb.firebaseio.com",
+            projectId: "arifa-shop",
+            storageBucket: "arifa-shop.firebasestorage.app",
+            messagingSenderId: "792267788402",
+            appId: "1:792267788402:web:96dd32886699ff188472eb"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -214,14 +203,23 @@
         let products = [];
         let isLogin = true;
 
-        // --- Auth Logic ---
-        const authToggle = document.getElementById('auth-toggle');
-        authToggle.onclick = () => {
-            isLogin = !isLogin;
-            document.getElementById('auth-title').innerText = isLogin ? 'Login' : 'Register';
-            document.getElementById('auth-btn').innerText = isLogin ? 'Login' : 'Register';
-            authToggle.innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
-        };
+        // --- Auth & Auto-Cart Logic ---
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            document.getElementById('login-status-indicator').style.display = user ? 'block' : 'none';
+            renderMenu();
+            if(user) {
+                updateBadges();
+                // Check for auto-add after login
+                const pendingId = localStorage.getItem('pendingCartItemId');
+                if(pendingId) {
+                    setTimeout(() => {
+                        window.addToCart(pendingId);
+                        localStorage.removeItem('pendingCartItemId');
+                    }, 1000);
+                }
+            }
+        });
 
         document.getElementById('auth-form').onsubmit = async (e) => {
             e.preventDefault();
@@ -233,14 +231,6 @@
                 closeModals();
             } catch (err) { alert(err.message); }
         };
-
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            document.getElementById('login-status-indicator').style.display = user ? 'block' : 'none';
-            renderMenu();
-            if(user) syncLocalToFirebase();
-            updateBadges();
-        });
 
         // --- Router ---
         window.onhashchange = () => {
@@ -255,29 +245,6 @@
             if(hash === '#orders') renderOrders();
         };
 
-        // --- Data Fetching ---
-        const fetchProducts = () => {
-            onValue(ref(db, 'products'), (snapshot) => {
-                const data = snapshot.val();
-                products = data ? Object.entries(data).map(([id, val]) => ({id, ...val})) : [];
-                renderCategories();
-                renderProductGrid('home', products);
-            });
-        };
-
-        const fetchSlider = () => {
-            get(ref(db, 'sliderImages')).then(snap => {
-                const data = snap.val();
-                const container = document.getElementById('slider');
-                if(data) {
-                    const html = Object.values(data).map((img, i) => `
-                        <div class="slide ${i===0?'active':''}" style="background-image:url('${img.downloadURL}')"></div>
-                    `).join('');
-                    container.innerHTML = html + `<button class="slider-btn prev" onclick="window.moveSlider(-1)">❮</button><button class="slider-btn next" onclick="window.moveSlider(1)">❯</button>`;
-                }
-            });
-        };
-
         // --- UI Rendering ---
         window.renderProductGrid = (targetId, items) => {
             const container = targetId === 'home' ? document.getElementById('main-products') : document.getElementById('search-results');
@@ -286,109 +253,99 @@
                     <img src="${p.imageUrl}" onclick="showProduct('${p.id}')">
                     <h3 onclick="showProduct('${p.id}')">${p.name}</h3>
                     <div class="price">৳${p.price}</div>
-                    <div class="card-actions">
-                        <button class="btn-icon" onclick="addToCart('${p.id}')"><i class="fas fa-shopping-cart"></i></button>
-                        <button class="btn-icon" onclick="addToWishlist('${p.id}')"><i class="fas fa-heart"></i></button>
-                    </div>
+                    <button class="btn-primary" style="padding: 8px; font-size: 0.75rem;" onclick="addToCart('${p.id}')">
+                        <i class="fas fa-shopping-cart"></i> Add to Cart
+                    </button>
                 </div>
             `).join('');
         };
 
         const renderCategories = () => {
             const cats = ['All', ...new Set(products.map(p => p.category))];
-            const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+            const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'];
             document.getElementById('category-list').innerHTML = cats.map((c, i) => `
                 <button class="category-pill" style="background:${colors[i % colors.length]}" onclick="filterCategory('${c}')">${c}</button>
             `).join('');
         };
 
-        window.filterCategory = (cat) => {
-            const filtered = cat === 'All' ? products : products.filter(p => p.category === cat);
-            renderProductGrid('home', filtered);
+        // --- Payment Management ---
+        window.showPaymentInfo = () => {
+            const method = document.getElementById('pay-method').value;
+            const infoDiv = document.getElementById('payment-details');
+            const instruction = document.getElementById('payment-instruction');
+            const tranInput = document.getElementById('tran-id');
+
+            if (method === 'COD') {
+                infoDiv.style.display = 'none';
+                tranInput.required = false;
+            } else {
+                infoDiv.style.display = 'block';
+                tranInput.required = true;
+                const myNumber = "01749666991"; // আপনার বিকাশ/নগদ নাম্বার এখানে দিন
+                instruction.innerHTML = `Please send money to <b>${myNumber}</b> (Personal) via Send Money and enter TrxID or Last 4 digits below.`;
+            }
         };
 
-        window.showProduct = (id) => {
-            const p = products.find(x => x.id === id);
-            document.getElementById('product-detail-content').innerHTML = `
-                <img src="${p.imageUrl}" style="width:100%; border-radius:10px">
-                <h2 style="margin:15px 0">${p.name}</h2>
-                <p>${p.description}</p>
-                <h3 style="margin:10px 0">৳${p.price}</h3>
-                <button class="btn-primary" onclick="addToCart('${p.id}')">Add to Cart</button>
-                <button class="btn-primary" style="margin-top:10px; background:var(--secondary)" onclick="closeModals()">Close</button>
-            `;
-            document.getElementById('product-modal').style.display = 'flex';
-        };
-
-        // --- Core Functions ---
+        // --- Core Actions ---
         window.addToCart = async (id) => {
-            if(!currentUser) return document.getElementById('auth-modal').style.display = 'flex';
+            if(!currentUser) {
+                localStorage.setItem('pendingCartItemId', id);
+                alert("Please Login first. Product will be added automatically.");
+                document.getElementById('auth-modal').style.display = 'flex';
+                return;
+            }
             const p = products.find(x => x.id === id);
             const cartRef = ref(db, `users/${currentUser.uid}/cart/${id}`);
             const snap = await get(cartRef);
             if(snap.exists()) {
-                update(cartRef, { quantity: snap.val().quantity + 1 });
+                await update(cartRef, { quantity: snap.val().quantity + 1 });
             } else {
-                set(cartRef, { name: p.name, price: p.price, imageUrl: p.imageUrl, quantity: 1 });
+                await set(cartRef, { name: p.name, price: p.price, imageUrl: p.imageUrl, quantity: 1 });
             }
             updateBadges();
-        };
-
-        window.addToWishlist = (id) => {
-            if(!currentUser) return document.getElementById('auth-modal').style.display = 'flex';
-            const p = products.find(x => x.id === id);
-            set(ref(db, `users/${currentUser.uid}/wishlist/${id}`), { name: p.name, price: p.price, imageUrl: p.imageUrl });
-            updateBadges();
-        };
-
-        const updateBadges = () => {
-            if(!currentUser) return;
-            onValue(ref(db, `users/${currentUser.uid}/cart`), s => {
-                document.getElementById('cart-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0;
-            });
-            onValue(ref(db, `users/${currentUser.uid}/wishlist`), s => {
-                document.getElementById('wish-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0;
-            });
+            alert("Added to cart!");
         };
 
         const renderCart = () => {
             if(!currentUser) return;
             onValue(ref(db, `users/${currentUser.uid}/cart`), snap => {
                 const items = snap.val() ? Object.entries(snap.val()) : [];
+                const cartList = document.getElementById('cart-list');
+                const cartSummary = document.getElementById('cart-summary');
+                const emptyMsg = document.getElementById('cart-empty-msg');
+                
+                if(items.length === 0) {
+                    cartList.innerHTML = '';
+                    cartSummary.style.display = 'none';
+                    emptyMsg.style.display = 'block';
+                    return;
+                }
+
+                emptyMsg.style.display = 'none';
+                cartSummary.style.display = 'block';
                 let total = 0;
-                document.getElementById('cart-list').innerHTML = items.map(([id, p]) => {
+                cartList.innerHTML = items.map(([id, p]) => {
                     total += p.price * p.quantity;
                     return `
                         <div class="cart-item">
                             <img src="${p.imageUrl}">
                             <div style="flex-grow:1">
-                                <h4>${p.name}</h4>
-                                <p>৳${p.price}</p>
+                                <h4 style="font-size:0.85rem">${p.name}</h4>
+                                <p style="color:var(--primary); font-weight:600">৳${p.price}</p>
                             </div>
-                            <div style="display:flex; align-items:center; gap:10px">
-                                <button onclick="changeQty('${id}', -1)">-</button>
+                            <div style="display:flex; align-items:center; gap:8px">
+                                <button onclick="changeQty('${id}', -1)" style="width:25px; height:25px; border-radius:50%; border:1px solid #ddd">-</button>
                                 <span>${p.quantity}</span>
-                                <button onclick="changeQty('${id}', 1)">+</button>
+                                <button onclick="changeQty('${id}', 1)" style="width:25px; height:25px; border-radius:50%; border:1px solid #ddd">+</button>
                             </div>
                         </div>
                     `;
                 }).join('');
-                document.getElementById('cart-total').innerText = total.toFixed(2);
+                document.getElementById('cart-total').innerText = total;
             });
         };
 
-        window.changeQty = (id, delta) => {
-            const itemRef = ref(db, `users/${currentUser.uid}/cart/${id}`);
-            get(itemRef).then(s => {
-                const newQty = s.val().quantity + delta;
-                if(newQty <= 0) remove(itemRef);
-                else update(itemRef, { quantity: newQty });
-            });
-        };
-
-        window.openCheckout = () => {
-            document.getElementById('checkout-modal').style.display = 'flex';
-        };
+        window.openCheckout = () => document.getElementById('checkout-modal').style.display = 'flex';
 
         document.getElementById('checkout-form').onsubmit = async (e) => {
             e.preventDefault();
@@ -397,65 +354,28 @@
             const total = items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
             
             const orderData = {
-                orderId: Date.now().toString(),
+                orderId: "AS-" + Date.now(),
                 date: Date.now(),
                 userEmail: currentUser.email,
                 items: items,
                 totalAmount: total,
                 status: 'Pending',
                 shippingName: document.getElementById('ship-name').value,
-                shippingAddress: document.getElementById('ship-addr').value
+                shippingAddress: document.getElementById('ship-addr').value,
+                paymentMethod: document.getElementById('pay-method').value,
+                transactionId: document.getElementById('tran-id').value || 'COD'
             };
 
             await push(ref(db, `orders/${currentUser.uid}`), orderData);
             await remove(ref(db, `users/${currentUser.uid}/cart`));
+            alert("Order placed successfully! We will contact you soon.");
             closeModals();
             location.hash = '#orders';
-        };
-
-        const renderOrders = () => {
-            if(!currentUser) return;
-            onValue(ref(db, `orders/${currentUser.uid}`), snap => {
-                const data = snap.val() ? Object.values(snap.val()) : [];
-                document.getElementById('orders-list').innerHTML = data.map(o => `
-                    <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px">
-                        <p><strong>Order ID:</strong> ${o.orderId}</p>
-                        <p><strong>Total:</strong> ৳${o.totalAmount}</p>
-                        <p><strong>Status:</strong> ${o.status}</p>
-                    </div>
-                `).join('');
-            });
         };
 
         // --- Helpers ---
         window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
         window.toggleMenu = () => document.getElementById('menu-modal').style.display = 'flex';
-        
-        const renderMenu = () => {
-            const menu = document.getElementById('menu-links');
-            if(currentUser) {
-                menu.innerHTML = `
-                    <p>Logged in as: <b>${currentUser.email}</b></p><br>
-                    <a href="#orders" onclick="closeModals()">My Orders</a><br><br>
-                    <a href="#" onclick="logout()">Logout</a>
-                `;
-            } else {
-                menu.innerHTML = `<a href="#" onclick="openAuth()">Login / Register</a>`;
-            }
-        };
-
-        window.logout = () => signOut(auth).then(() => location.reload());
-        window.openAuth = () => { closeModals(); document.getElementById('auth-modal').style.display='flex'; };
-
-        // Search logic
-        document.getElementById('search-input').oninput = (e) => {
-            const query = e.target.value.toLowerCase();
-            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
-            renderProductGrid('search', filtered);
-        };
-
-        // Slider Nav
-        let currentSlide = 0;
         window.moveSlider = (n) => {
             const slides = document.querySelectorAll('.slide');
             if(!slides.length) return;
@@ -463,13 +383,51 @@
             currentSlide = (currentSlide + n + slides.length) % slides.length;
             slides[currentSlide].classList.add('active');
         };
+        window.changeQty = (id, delta) => {
+            const itemRef = ref(db, `users/${currentUser.uid}/cart/${id}`);
+            get(itemRef).then(s => {
+                const newQty = s.val().quantity + delta;
+                if(newQty <= 0) remove(itemRef);
+                else update(itemRef, { quantity: newQty });
+            });
+        };
+        window.logout = () => signOut(auth).then(() => location.reload());
+        
+        // --- Initialization ---
+        let currentSlide = 0;
         setInterval(() => moveSlider(1), 5000);
+        
+        onValue(ref(db, 'products'), (snapshot) => {
+            products = snapshot.val() ? Object.entries(snapshot.val()).map(([id, val]) => ({id, ...val})) : [];
+            renderCategories();
+            renderProductGrid('home', products);
+        });
 
-        // Init
-        fetchProducts();
-        fetchSlider();
+        get(ref(db, 'sliderImages')).then(snap => {
+            if(snap.exists()) {
+                const html = Object.values(snap.val()).map((img, i) => `
+                    <div class="slide ${i===0?'active':''}" style="background-image:url('${img.downloadURL}')"></div>
+                `).join('');
+                document.getElementById('slider').innerHTML = html + `<button class="slider-btn prev" onclick="moveSlider(-1)">❮</button><button class="slider-btn next" onclick="moveSlider(1)">❯</button>`;
+            }
+        });
+
+        const updateBadges = () => {
+            onValue(ref(db, `users/${currentUser.uid}/cart`), s => document.getElementById('cart-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0);
+            onValue(ref(db, `users/${currentUser.uid}/wishlist`), s => document.getElementById('wish-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0);
+        };
+
+        const renderMenu = () => {
+            const menu = document.getElementById('menu-links');
+            menu.innerHTML = currentUser ? 
+                `<p style="color:#2563eb; margin-bottom:10px;">Hi, ${currentUser.email}</p>
+                 <a href="#orders" onclick="closeModals()" style="text-decoration:none; color:var(--dark);">My Orders</a><br><br>
+                 <a href="#" onclick="logout()" style="text-decoration:none; color:red;">Logout</a>` : 
+                `<a href="#" onclick="document.getElementById('auth-modal').style.display='flex'; closeModals()" style="text-decoration:none; color:var(--primary);">Login / Register</a>`;
+        };
+
         window.onhashchange();
-
     </script>
 </body>
 </html>
+
