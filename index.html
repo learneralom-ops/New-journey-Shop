@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arifa Smart Shopping </title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #64748b;
+            --accent: #f59e0b;
+            --bg: #f8fafc;
+            --white: #ffffff;
+            --dark: #1e293b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: var(--dark); padding-top: 60px; padding-bottom: 70px; }
+
+        /* Header */
+        header {
+            position: fixed; top: 0; width: 100%; height: 60px;
+            background: var(--white); display: flex; align-items: center;
+            justify-content: space-between; padding: 0 20px; z-index: 1000; box-shadow: var(--shadow);
+        }
+        .logo { font-weight: 700; font-size: 1.2rem; color: var(--primary); }
+        #login-status-indicator { width: 10px; height: 10px; background: #10b981; border-radius: 50%; display: none; }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed; bottom: 0; width: 100%; height: 65px;
+            background: var(--white); display: flex; justify-content: space-around;
+            align-items: center; border-top: 1px solid #e2e8f0; z-index: 1000;
+        }
+        .nav-item { text-align: center; color: var(--secondary); text-decoration: none; font-size: 0.8rem; position: relative; cursor: pointer; }
+        .nav-item.active { color: var(--primary); }
+        .badge {
+            position: absolute; top: -5px; right: -5px; background: red;
+            color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem;
+        }
+
+        /* Sections */
+        section { display: none; padding: 15px; max-width: 1200px; margin: 0 auto; }
+        section.active { display: block; }
+
+        /* Slider */
+        .slider-container { width: 100%; height: 200px; border-radius: 12px; overflow: hidden; position: relative; margin-bottom: 20px; }
+        .slide { width: 100%; height: 100%; background-size: cover; background-position: center; transition: 0.5s; display: none; }
+        .slide.active { display: flex; align-items: center; justify-content: center; }
+        .fallback-slide { background: linear-gradient(45deg, var(--primary), var(--accent)); color: white; }
+        .slider-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.3); color: white; border: none; padding: 10px; cursor: pointer; }
+        .next { right: 0; }
+
+        /* Category Bubbles */
+        .categories { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+        .category-pill {
+            padding: 8px 18px; border-radius: 20px; white-space: nowrap; 
+            cursor: pointer; font-size: 0.9rem; color: white; border: none;
+        }
+
+        /* Product Grid - Mobile 2 Columns */
+        .product-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; }
+        @media (min-width: 768px) { .product-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .product-card { background: var(--white); border-radius: 12px; padding: 10px; box-shadow: var(--shadow); position: relative; }
+        .product-card img { width: 100%; height: 140px; object-fit: cover; border-radius: 8px; }
+        .product-card h3 { font-size: 0.9rem; margin: 8px 0; }
+        .price { color: var(--primary); font-weight: 600; }
+        .card-actions { display: flex; justify-content: space-between; margin-top: 10px; }
+        .btn-icon { background: #f1f5f9; border: none; padding: 8px; border-radius: 8px; cursor: pointer; }
+
+        /* Modals */
+        .modal { 
+            position: fixed; inset: 0; background: rgba(0,0,0,0.5); 
+            display: none; align-items: center; justify-content: center; z-index: 2000; padding: 20px;
+        }
+        .modal-content { background: var(--white); padding: 20px; border-radius: 15px; width: 100%; max-width: 500px; max-height: 90vh; overflow-y: auto; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 12px; border-radius: 8px; width: 100%; cursor: pointer; }
+
+        /* Specific Views */
+        .cart-item { display: flex; gap: 15px; background: white; padding: 10px; border-radius: 10px; margin-bottom: 10px; align-items: center; }
+        .cart-item img { width: 60px; height: 60px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">Arifa Smart Shopping</div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <div id="login-status-indicator" title="Logged In"></div>
+            <i class="fas fa-search" onclick="location.hash='#search'"></i>
+        </div>
+    </header>
+
+    <section id="home" class="active">
+        <div class="slider-container" id="slider">
+            <div class="slide fallback-slide active"><h1>Arifa Smart Shop</h1></div>
+            <button class="slider-btn prev" onclick="moveSlider(-1)">❮</button>
+            <button class="slider-btn next" onclick="moveSlider(1)">❯</button>
+        </div>
+        <div class="categories" id="category-list"></div>
+        <div class="product-grid" id="main-products"></div>
+    </section>
+
+    <section id="search">
+        <div class="form-group">
+            <input type="text" id="search-input" placeholder="Search products...">
+        </div>
+        <div class="product-grid" id="search-results"></div>
+    </section>
+
+    <section id="cart">
+        <h2>Your Cart</h2>
+        <div id="cart-list"></div>
+        <div id="cart-summary" style="margin-top:20px; text-align:right;">
+            <h3>Total: ৳<span id="cart-total">0</span></h3>
+            <button class="btn-primary" onclick="openCheckout()" style="margin-top:10px">Proceed to Checkout</button>
+        </div>
+    </section>
+
+    <section id="wishlist">
+        <h2>Wishlist</h2>
+        <div id="wishlist-list" class="product-grid"></div>
+    </section>
+
+    <section id="orders">
+        <h2>My Orders</h2>
+        <div id="orders-list"></div>
+    </section>
+
+    <section id="about"><h2>About Us</h2><p>Your premium e-commerce destination.</p></section>
+    <section id="contact">
+        <h2>Contact Us</h2>
+        <form id="contact-form" style="margin-top:20px">
+            <div class="form-group"><input type="text" placeholder="Name" required id="c-name"></div>
+            <div class="form-group"><input type="email" placeholder="Email" required id="c-email"></div>
+            <div class="form-group"><textarea placeholder="Message" rows="5" required id="c-msg"></textarea></div>
+            <button class="btn-primary" type="submit">Send Message</button>
+        </form>
+    </section>
+
+    <nav class="bottom-nav">
+        <a href="#home" class="nav-item active"><i class="fas fa-home"></i><div>Home</div></a>
+        <a href="#wishlist" class="nav-item"><i class="fas fa-heart"></i><div>Wishlist</div><span class="badge" id="wish-badge">0</span></a>
+        <a href="#cart" class="nav-item"><i class="fas fa-shopping-cart"></i><div>Cart</div><span class="badge" id="cart-badge">0</span></a>
+        <div class="nav-item" onclick="toggleMenu()"><i class="fas fa-bars"></i><div>Menu</div></div>
+    </nav>
+
+    <div class="modal" id="auth-modal">
+        <div class="modal-content">
+            <h2 id="auth-title">Login</h2>
+            <form id="auth-form" style="margin-top:15px">
+                <div class="form-group"><input type="email" id="auth-email" placeholder="Email" required></div>
+                <div class="form-group"><input type="password" id="auth-pass" placeholder="Password" required></div>
+                <button class="btn-primary" type="submit" id="auth-btn">Login</button>
+                <p style="margin-top:10px; text-align:center; font-size:0.9rem">
+                    <span id="auth-toggle" style="color:var(--primary); cursor:pointer">Don't have an account? Register</span>
+                </p>
+            </form>
+            <button onclick="closeModals()" style="margin-top:10px; background:none; border:none; width:100%">Close</button>
+        </div>
+    </div>
+
+    <div class="modal" id="menu-modal">
+        <div class="modal-content">
+            <div id="menu-links"></div>
+            <hr style="margin:15px 0">
+            <a href="#about" onclick="closeModals()">About Us</a><br><br>
+            <a href="#contact" onclick="closeModals()">Contact Us</a><br><br>
+            <button class="btn-primary" onclick="closeModals()">Back</button>
+        </div>
+    </div>
+
+    <div class="modal" id="product-modal">
+        <div class="modal-content" id="product-detail-content"></div>
+    </div>
+
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <h2>Shipping Details</h2>
+            <form id="checkout-form">
+                <div class="form-group"><input type="text" id="ship-name" placeholder="Full Name" required></div>
+                <div class="form-group"><textarea id="ship-addr" placeholder="Full Address" required></textarea></div>
+                <button class="btn-primary" type="submit">Place Order</button>
+            </form>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+        import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyDbc54ZsWBXFqX50KvY85kbHkUo_Ct5hLk",
+  authDomain: "arifa-shop.firebaseapp.com",
+  databaseURL: "https://arifa-shop-default-rtdb.firebaseio.com",
+  projectId: "arifa-shop",
+  storageBucket: "arifa-shop.firebasestorage.app",
+  messagingSenderId: "792267788402",
+  appId: "1:792267788402:web:96dd32886699ff188472eb"
+};
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app);
+
+        let currentUser = null;
+        let products = [];
+        let isLogin = true;
+
+        // --- Auth Logic ---
+        const authToggle = document.getElementById('auth-toggle');
+        authToggle.onclick = () => {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? 'Login' : 'Register';
+            document.getElementById('auth-btn').innerText = isLogin ? 'Login' : 'Register';
+            authToggle.innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+        };
+
+        document.getElementById('auth-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const pass = document.getElementById('auth-pass').value;
+            try {
+                if(isLogin) await signInWithEmailAndPassword(auth, email, pass);
+                else await createUserWithEmailAndPassword(auth, email, pass);
+                closeModals();
+            } catch (err) { alert(err.message); }
+        };
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            document.getElementById('login-status-indicator').style.display = user ? 'block' : 'none';
+            renderMenu();
+            if(user) syncLocalToFirebase();
+            updateBadges();
+        });
+
+        // --- Router ---
+        window.onhashchange = () => {
+            const hash = location.hash || '#home';
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(hash.substring(1))?.classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => {
+                n.classList.toggle('active', n.getAttribute('href') === hash);
+            });
+            if(hash === '#cart') renderCart();
+            if(hash === '#wishlist') renderWishlist();
+            if(hash === '#orders') renderOrders();
+        };
+
+        // --- Data Fetching ---
+        const fetchProducts = () => {
+            onValue(ref(db, 'products'), (snapshot) => {
+                const data = snapshot.val();
+                products = data ? Object.entries(data).map(([id, val]) => ({id, ...val})) : [];
+                renderCategories();
+                renderProductGrid('home', products);
+            });
+        };
+
+        const fetchSlider = () => {
+            get(ref(db, 'sliderImages')).then(snap => {
+                const data = snap.val();
+                const container = document.getElementById('slider');
+                if(data) {
+                    const html = Object.values(data).map((img, i) => `
+                        <div class="slide ${i===0?'active':''}" style="background-image:url('${img.downloadURL}')"></div>
+                    `).join('');
+                    container.innerHTML = html + `<button class="slider-btn prev" onclick="window.moveSlider(-1)">❮</button><button class="slider-btn next" onclick="window.moveSlider(1)">❯</button>`;
+                }
+            });
+        };
+
+        // --- UI Rendering ---
+        window.renderProductGrid = (targetId, items) => {
+            const container = targetId === 'home' ? document.getElementById('main-products') : document.getElementById('search-results');
+            container.innerHTML = items.map(p => `
+                <div class="product-card">
+                    <img src="${p.imageUrl}" onclick="showProduct('${p.id}')">
+                    <h3 onclick="showProduct('${p.id}')">${p.name}</h3>
+                    <div class="price">$${p.price}</div>
+                    <div class="card-actions">
+                        <button class="btn-icon" onclick="addToCart('${p.id}')"><i class="fas fa-shopping-cart"></i></button>
+                        <button class="btn-icon" onclick="addToWishlist('${p.id}')"><i class="fas fa-heart"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        };
+
+        const renderCategories = () => {
+            const cats = ['All', ...new Set(products.map(p => p.category))];
+            const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+            document.getElementById('category-list').innerHTML = cats.map((c, i) => `
+                <button class="category-pill" style="background:${colors[i % colors.length]}" onclick="filterCategory('${c}')">${c}</button>
+            `).join('');
+        };
+
+        window.filterCategory = (cat) => {
+            const filtered = cat === 'All' ? products : products.filter(p => p.category === cat);
+            renderProductGrid('home', filtered);
+        };
+
+        window.showProduct = (id) => {
+            const p = products.find(x => x.id === id);
+            document.getElementById('product-detail-content').innerHTML = `
+                <img src="${p.imageUrl}" style="width:100%; border-radius:10px">
+                <h2 style="margin:15px 0">${p.name}</h2>
+                <p>${p.description}</p>
+                <h3 style="margin:10px 0">$${p.price}</h3>
+                <button class="btn-primary" onclick="addToCart('${p.id}')">Add to Cart</button>
+                <button class="btn-primary" style="margin-top:10px; background:var(--secondary)" onclick="closeModals()">Close</button>
+            `;
+            document.getElementById('product-modal').style.display = 'flex';
+        };
+
+        // --- Core Functions ---
+        window.addToCart = async (id) => {
+            if(!currentUser) return document.getElementById('auth-modal').style.display = 'flex';
+            const p = products.find(x => x.id === id);
+            const cartRef = ref(db, `users/${currentUser.uid}/cart/${id}`);
+            const snap = await get(cartRef);
+            if(snap.exists()) {
+                update(cartRef, { quantity: snap.val().quantity + 1 });
+            } else {
+                set(cartRef, { name: p.name, price: p.price, imageUrl: p.imageUrl, quantity: 1 });
+            }
+            updateBadges();
+        };
+
+        window.addToWishlist = (id) => {
+            if(!currentUser) return document.getElementById('auth-modal').style.display = 'flex';
+            const p = products.find(x => x.id === id);
+            set(ref(db, `users/${currentUser.uid}/wishlist/${id}`), { name: p.name, price: p.price, imageUrl: p.imageUrl });
+            updateBadges();
+        };
+
+        const updateBadges = () => {
+            if(!currentUser) return;
+            onValue(ref(db, `users/${currentUser.uid}/cart`), s => {
+                document.getElementById('cart-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0;
+            });
+            onValue(ref(db, `users/${currentUser.uid}/wishlist`), s => {
+                document.getElementById('wish-badge').innerText = s.exists() ? Object.keys(s.val()).length : 0;
+            });
+        };
+
+        const renderCart = () => {
+            if(!currentUser) return;
+            onValue(ref(db, `users/${currentUser.uid}/cart`), snap => {
+                const items = snap.val() ? Object.entries(snap.val()) : [];
+                let total = 0;
+                document.getElementById('cart-list').innerHTML = items.map(([id, p]) => {
+                    total += p.price * p.quantity;
+                    return `
+                        <div class="cart-item">
+                            <img src="${p.imageUrl}">
+                            <div style="flex-grow:1">
+                                <h4>${p.name}</h4>
+                                <p>$${p.price}</p>
+                            </div>
+                            <div style="display:flex; align-items:center; gap:10px">
+                                <button onclick="changeQty('${id}', -1)">-</button>
+                                <span>${p.quantity}</span>
+                                <button onclick="changeQty('${id}', 1)">+</button>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('cart-total').innerText = total.toFixed(2);
+            });
+        };
+
+        window.changeQty = (id, delta) => {
+            const itemRef = ref(db, `users/${currentUser.uid}/cart/${id}`);
+            get(itemRef).then(s => {
+                const newQty = s.val().quantity + delta;
+                if(newQty <= 0) remove(itemRef);
+                else update(itemRef, { quantity: newQty });
+            });
+        };
+
+        window.openCheckout = () => {
+            document.getElementById('checkout-modal').style.display = 'flex';
+        };
+
+        document.getElementById('checkout-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const cartSnap = await get(ref(db, `users/${currentUser.uid}/cart`));
+            const items = Object.values(cartSnap.val());
+            const total = items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+            
+            const orderData = {
+                orderId: Date.now().toString(),
+                date: Date.now(),
+                userEmail: currentUser.email,
+                items: items,
+                totalAmount: total,
+                status: 'Pending',
+                shippingName: document.getElementById('ship-name').value,
+                shippingAddress: document.getElementById('ship-addr').value
+            };
+
+            await push(ref(db, `orders/${currentUser.uid}`), orderData);
+            await remove(ref(db, `users/${currentUser.uid}/cart`));
+            closeModals();
+            location.hash = '#orders';
+        };
+
+        const renderOrders = () => {
+            if(!currentUser) return;
+            onValue(ref(db, `orders/${currentUser.uid}`), snap => {
+                const data = snap.val() ? Object.values(snap.val()) : [];
+                document.getElementById('orders-list').innerHTML = data.map(o => `
+                    <div style="background:white; padding:15px; border-radius:10px; margin-bottom:10px">
+                        <p><strong>Order ID:</strong> ${o.orderId}</p>
+                        <p><strong>Total:</strong> $${o.totalAmount}</p>
+                        <p><strong>Status:</strong> ${o.status}</p>
+                    </div>
+                `).join('');
+            });
+        };
+
+        // --- Helpers ---
+        window.closeModals = () => document.querySelectorAll('.modal').forEach(m => m.style.display='none');
+        window.toggleMenu = () => document.getElementById('menu-modal').style.display = 'flex';
+        
+        const renderMenu = () => {
+            const menu = document.getElementById('menu-links');
+            if(currentUser) {
+                menu.innerHTML = `
+                    <p>Logged in as: <b>${currentUser.email}</b></p><br>
+                    <a href="#orders" onclick="closeModals()">My Orders</a><br><br>
+                    <a href="#" onclick="logout()">Logout</a>
+                `;
+            } else {
+                menu.innerHTML = `<a href="#" onclick="openAuth()">Login / Register</a>`;
+            }
+        };
+
+        window.logout = () => signOut(auth).then(() => location.reload());
+        window.openAuth = () => { closeModals(); document.getElementById('auth-modal').style.display='flex'; };
+
+        // Search logic
+        document.getElementById('search-input').oninput = (e) => {
+            const query = e.target.value.toLowerCase();
+            const filtered = products.filter(p => p.name.toLowerCase().includes(query));
+            renderProductGrid('search', filtered);
+        };
+
+        // Slider Nav
+        let currentSlide = 0;
+        window.moveSlider = (n) => {
+            const slides = document.querySelectorAll('.slide');
+            if(!slides.length) return;
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        };
+        setInterval(() => moveSlider(1), 5000);
+
+        // Init
+        fetchProducts();
+        fetchSlider();
+        window.onhashchange();
+
+    </script>
+</body>
+</html>
