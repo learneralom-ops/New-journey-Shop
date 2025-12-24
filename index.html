@@ -133,8 +133,16 @@
         <div class="modal-content">
             <h2 id="auth-title">Login</h2>
             <form id="auth-form" style="margin-top:15px">
-                <div class="form-group"><input type="email" id="auth-email" placeholder="Email" required></div>
-                <div class="form-group"><input type="password" id="auth-pass" placeholder="Password" required></div>
+                <div class="form-group" id="phone-group" style="display:none">
+                    <input type="tel" id="auth-phone" placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="auth-identifier" placeholder="Phone or Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="auth-pass" placeholder="Password" required>
+                </div>
+                
                 <button class="btn-primary" type="submit" id="auth-btn">Login</button>
                 <p style="margin-top:15px; text-align:center; font-size:0.9rem">
                     <span id="auth-toggle" style="color:var(--primary); cursor:pointer">Don't have an account? Register</span>
@@ -203,6 +211,27 @@
         let products = [];
         let isLogin = true;
 
+        // --- Toggle Login/Signup Form ---
+        document.getElementById('auth-toggle').onclick = () => {
+            isLogin = !isLogin;
+            document.getElementById('auth-title').innerText = isLogin ? 'Login' : 'Sign Up';
+            document.getElementById('auth-btn').innerText = isLogin ? 'Login' : 'Register';
+            document.getElementById('auth-toggle').innerText = isLogin ? "Don't have an account? Register" : "Already have an account? Login";
+            
+            // Show/Hide fields based on mode
+            const phoneGroup = document.getElementById('phone-group');
+            const identifierInput = document.getElementById('auth-identifier');
+            
+            if (isLogin) {
+                phoneGroup.style.display = 'none';
+                identifierInput.placeholder = "Phone or Email";
+            } else {
+                phoneGroup.style.display = 'block';
+                document.getElementById('auth-phone').placeholder = "Phone Number";
+                identifierInput.placeholder = "Email Address";
+            }
+        };
+
         // --- Auth & Auto-Cart Logic ---
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
@@ -210,7 +239,6 @@
             renderMenu();
             if(user) {
                 updateBadges();
-                // Check for auto-add after login
                 const pendingId = localStorage.getItem('pendingCartItemId');
                 if(pendingId) {
                     setTimeout(() => {
@@ -223,13 +251,29 @@
 
         document.getElementById('auth-form').onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('auth-email').value;
+            const identifier = document.getElementById('auth-identifier').value;
+            const phone = document.getElementById('auth-phone').value;
             const pass = document.getElementById('auth-pass').value;
+            
+            // Note: Firebase requires an actual email format for Auth. 
+            // If user enters phone only in signup, we create a pseudo-email like phone@shop.com
+            let email = identifier;
+            if(!identifier.includes('@')) email = identifier.trim() + "@arifa.com";
+
             try {
-                if(isLogin) await signInWithEmailAndPassword(auth, email, pass);
-                else await createUserWithEmailAndPassword(auth, email, pass);
+                if(isLogin) {
+                    await signInWithEmailAndPassword(auth, email, pass);
+                } else {
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                    // Save additional data like phone to database
+                    await set(ref(db, `users/${userCredential.user.uid}/profile`), {
+                        phone: phone,
+                        email: identifier,
+                        createdAt: Date.now()
+                    });
+                }
                 closeModals();
-            } catch (err) { alert(err.message); }
+            } catch (err) { alert("Error: " + err.message); }
         };
 
         // --- Router ---
@@ -281,7 +325,7 @@
             } else {
                 infoDiv.style.display = 'block';
                 tranInput.required = true;
-                const myNumber = "01749666991"; // আপনার বিকাশ/নগদ নাম্বার এখানে দিন
+                const myNumber = "01749666991"; 
                 instruction.innerHTML = `Please send money to <b>${myNumber}</b> (Personal) via Send Money and enter TrxID or Last 4 digits below.`;
             }
         };
