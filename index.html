@@ -11,81 +11,126 @@
 
 <style>
 *{box-sizing:border-box;font-family:Arial,sans-serif}
-body{margin:0;background:#f5f5f5}
+body{margin:0;background:#f0f2f5; color: #333;}
 
 /* Navbar */
 nav{
   background:#f85606;
   color:#fff;
-  padding:10px;
+  padding:15px;
   display:flex;
   flex-wrap:wrap;
   gap:10px;
   align-items:center;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
-nav h2{margin:0;font-size:20px}
+nav h2{margin:0;font-size:20px; flex-shrink: 0;}
 nav input{
   flex:1;
-  padding:8px;
+  padding:10px;
   border:none;
   border-radius:5px;
+  outline: none;
 }
 
 /* Category */
 .categories{
   display:flex;
-  overflow:auto;
+  overflow-x:auto;
   background:#fff;
   padding:10px;
-  gap:10px;
+  gap:8px;
+  white-space: nowrap;
+  border-bottom: 1px solid #ddd;
 }
+.categories::-webkit-scrollbar { display: none; } /* Scrollbar হাইড করার জন্য */
+
 .categories button{
-  padding:6px 12px;
-  border:none;
+  padding:8px 16px;
+  border:1px solid #ddd;
   border-radius:20px;
-  background:#eee;
+  background:#fff;
   cursor:pointer;
+  transition: 0.3s;
 }
 .categories button.active{
   background:#f85606;
   color:#fff;
+  border-color: #f85606;
 }
 
-/* Products */
+/* Products Grid */
 .products{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:15px;
-  padding:15px;
+  /* মোবাইলে ২টা এবং বড় স্ক্রিনে প্রয়োজন অনুযায়ী অটো অ্যাডজাস্ট হবে */
+  grid-template-columns: repeat(2, 1fr); 
+  gap:10px;
+  padding:10px;
 }
+
+@media (min-width: 600px) {
+  .products {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 15px;
+    padding: 15px;
+  }
+}
+
 .product{
   background:#fff;
-  border-radius:10px;
+  border-radius:8px;
   overflow:hidden;
-  box-shadow:0 4px 10px rgba(0,0,0,.1);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
 }
+.product:hover { transform: translateY(-3px); }
+
 .product img{
   width:100%;
-  height:160px;
+  aspect-ratio: 1 / 1; /* ইমেজগুলোকে স্কয়ার গ্রিড করার জন্য */
   object-fit:cover;
+  background: #f9f9f9;
 }
-.info{padding:10px}
-.price{color:#f85606;font-weight:bold}
-.old{color:#999;text-decoration:line-through;font-size:13px}
+.info{
+  padding:10px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.info b{
+  font-size: 14px;
+  height: 34px; /* ২ লাইনের বেশি নাম যাতে গ্রিড নষ্ট না করে */
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.2;
+}
+.price{color:#f85606; font-weight:bold; margin-top: 5px; font-size: 16px;}
+.old{color:#999; text-decoration:line-through; font-size:12px; margin-left: 5px;}
+
 .buy{
   display:block;
   background:#f85606;
   color:#fff;
   text-align:center;
   padding:8px;
-  border-radius:5px;
-  margin-top:8px;
+  border-radius:4px;
+  margin-top:auto; /* বাটন সবসময় কার্ডের নিচে থাকবে */
   text-decoration:none;
+  font-size: 13px;
+  font-weight: bold;
 }
 .timer{
-  font-size:13px;
-  color:red;
-  margin-top:5px;
+  font-size:11px;
+  color: #e02020;
+  margin: 5px 0;
+  font-weight: bold;
 }
 
 /* WhatsApp */
@@ -95,10 +140,16 @@ nav input{
   bottom:20px;
   background:#25d366;
   color:#fff;
-  padding:14px;
+  width: 50px;
+  height: 50px;
   border-radius:50%;
-  font-size:22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size:25px;
   text-decoration:none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  z-index: 1000;
 }
 
 /* Footer */
@@ -106,7 +157,8 @@ footer{
   background:#111;
   color:#fff;
   text-align:center;
-  padding:10px;
+  padding:20px;
+  margin-top: 20px;
 }
 </style>
 </head>
@@ -114,13 +166,15 @@ footer{
 <body>
 
 <nav>
-  <h2>🧡 Arifa Smart Shop</h2>
+  <h2>Arifa Smart Shop</h2>
   <input id="search" placeholder="Search products...">
 </nav>
 
 <div class="categories" id="categories"></div>
 
-<section class="products" id="products"></section>
+<section class="products" id="products">
+  <p style="padding: 20px; text-align: center;">Loading products...</p>
+</section>
 
 <footer>
 © 2026 Arifa Smart Shop
@@ -129,28 +183,24 @@ footer{
 <a class="whatsapp" href="https://wa.me/8801749666991" target="_blank">💬</a>
 
 <script type="module">
-  // Firebase SDK ইমপোর্ট
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-  // আপনার Firebase প্রকল্পের কনফিগারেশন এখানে বসান
   const firebaseConfig = {
-  apiKey: "AIzaSyDbc54ZsWBXFqX50KvY85kbHkUo_Ct5hLk",
-  authDomain: "arifa-shop.firebaseapp.com",
-  databaseURL: "https://arifa-shop-default-rtdb.firebaseio.com",
-  projectId: "arifa-shop",
-  storageBucket: "arifa-shop.firebasestorage.app",
-  messagingSenderId: "792267788402",
-  appId: "1:792267788402:web:96dd32886699ff188472eb"
-};
+    apiKey: "AIzaSyDbc54ZsWBXFqX50KvY85kbHkUo_Ct5hLk",
+    authDomain: "arifa-shop.firebaseapp.com",
+    databaseURL: "https://arifa-shop-default-rtdb.firebaseio.com",
+    projectId: "arifa-shop",
+    storageBucket: "arifa-shop.firebasestorage.app",
+    messagingSenderId: "792267788402",
+    appId: "1:792267788402:web:96dd32886699ff188472eb"
+  };
 
-  // Initialize Firebase
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
   let allProducts = [];
 
-  // Firestore থেকে ডাটা ফেচ করা
   async function fetchProducts() {
     try {
       const querySnapshot = await getDocs(collection(db, "products"));
@@ -160,7 +210,7 @@ footer{
       renderProducts(allProducts);
     } catch (error) {
       console.error("ডাটা আনতে সমস্যা হয়েছে: ", error);
-      products.innerHTML = "<p style='padding:20px;'>ডাটা লোড হচ্ছে না। আপনার Firebase Config চেক করুন।</p>";
+      document.getElementById("products").innerHTML = "<p style='padding:20px;'>ডাটা লোড হচ্ছে না। আপনার ইন্টারনেট কানেকশন চেক করুন।</p>";
     }
   }
 
@@ -171,12 +221,12 @@ footer{
     cats.forEach(c => {
       const b = document.createElement("button");
       b.textContent = c;
+      if(c === "All") b.classList.add("active");
       b.onclick = () => filterCategory(c, b);
       categoryDiv.appendChild(b);
     });
   }
 
-  // গ্লোবাল ফাংশন হিসেবে সেট করা (onclick কাজ করার জন্য)
   window.filterCategory = (cat, btn) => {
     document.querySelectorAll(".categories button").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
@@ -185,45 +235,43 @@ footer{
 
   function renderProducts(list) {
     const productSection = document.getElementById("products");
-    productSection.innerHTML = "";
+    productSection.innerHTML = list.length > 0 ? "" : "<p style='grid-column: 1/-1; text-align: center; padding: 20px;'>No products found.</p>";
+    
     list.forEach(p => {
       const div = document.createElement("div");
       div.className = "product";
       div.innerHTML = `
-        <img src="${p.img}">
+        <img src="${p.img || 'https://via.placeholder.com/200'}" alt="${p.title}">
         <div class="info">
           <b>${p.title}</b>
-          <p class="price">৳ ${p.price} <span class="old">৳ ${p.old}</span></p>
+          <p class="price">৳ ${p.price} <span class="old">${p.old ? '৳ ' + p.old : ''}</span></p>
           <div class="timer" data-time="${p.offerEnd}"></div>
-          <a class="buy" href="${p.link}" target="_blank">Buy on Daraz</a>
+          <a class="buy" href="${p.link}" target="_blank">অর্ডার করুন</a>
         </div>`;
       productSection.appendChild(div);
     });
   }
 
-  // সার্চ ফাংশন
   document.getElementById("search").oninput = () => {
     const q = document.getElementById("search").value.toLowerCase();
     renderProducts(allProducts.filter(p => p.title.toLowerCase().includes(q)));
   };
 
-  // কাউন্টডাউন টাইমার
   setInterval(() => {
     document.querySelectorAll(".timer").forEach(t => {
+      if(!t.dataset.time) return;
       const end = new Date(t.dataset.time).getTime();
       const now = Date.now();
       const d = end - now;
-      if (d <= 0) { t.innerText = "Offer Ended"; return; }
+      if (d <= 0) { t.innerText = "অফারের সময় শেষ"; return; }
       const h = Math.floor(d / 3600000);
       const m = Math.floor(d % 3600000 / 60000);
       const s = Math.floor(d % 60000 / 1000);
-      t.innerText = `⏰ ${h}h ${m}m ${s}s`;
+      t.innerText = `⏰ শেষ হবে: ${h}h ${m}m ${s}s`;
     });
   }, 1000);
 
-  // রান করা
   fetchProducts();
-
 </script>
 
 </body>
