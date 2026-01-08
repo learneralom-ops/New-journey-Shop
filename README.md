@@ -1,6 +1,6 @@
 # New journey Shop - E-commerce Website
 
-A Daraz-style single page e-commerce website with Firebase integration and responsive design.
+A New journey Shop-style single page e-commerce website with Firebase integration and responsive design.
 
 ## Features
 
