@@ -3,272 +3,454 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Journey Shop - Online Shopping</title>
+    <title>New Journey Shop - Online shopping</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Facebook Pixel Code -->
-    <script>
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', 'YOUR_PIXEL_ID'); // Replace with your Pixel ID
-        fbq('track', 'PageView');
-    </script>
-    <noscript><img height="1" width="1" style="display:none"
-        src="https://www.facebook.com/tr?id=YOUR_PIXEL_ID&ev=PageView&noscript=1"
-        alt="Facebook Pixel"/></noscript>
-    <!-- End Facebook Pixel Code -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="header">
-        <div class="container">
-            <div class="header-content">
-                <!-- Logo -->
-                <div class="logo">
-                    <a href="#" class="logo-link">
-                        <i class="fas fa-shopping-bag logo-icon"></i>
-                        <span class="logo-text">New Journey Shop</span>
-                    </a>
-                </div>
-
-                <!-- Search Bar -->
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search for products...">
-                    <button class="search-btn">
-                        <i class="fas fa-search"></i>
-                    </button>
-                </div>
-
-                <!-- User Actions -->
-                <div class="user-actions">
-                    <button class="auth-btn" id="loginBtn">
-                        <i class="fas fa-user"></i>
-                        <span>Login / Register</span>
-                    </button>
-                    <div class="cart-icon" id="cartIcon">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="cart-count">0</span>
-                    </div>
-                </div>
-            </div>
+    <!-- Loading Skeleton -->
+    <div id="loadingSkeleton" class="loading-skeleton">
+        <div class="skeleton-nav"></div>
+        <div class="skeleton-banner"></div>
+        <div class="skeleton-products">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
         </div>
-    </header>
+    </div>
 
-    <!-- Navigation & Categories -->
-    <nav class="categories-nav">
-        <div class="container">
-            <div class="categories">
-                <button class="category-btn active" data-category="all">All Products</button>
-                <button class="category-btn" data-category="sex-toy">Sex Toy</button>
-                <button class="category-btn" data-category="electronics">Electronics</button>
-                <button class="category-btn" data-category="fashion">Fashion</button>
-                <button class="category-btn" data-category="grocery">Grocery</button>
-                <button class="category-btn" data-category="mobile">Mobile</button>
-                <button class="category-btn" data-category="accessories">Accessories</button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Hero Banner -->
-            <section class="hero-banner">
-                <div class="banner-slide active">
-                    <div class="banner-content">
-                        <h2>Great Summer Sale!</h2>
-                        <p>Up to 70% off on all electronics</p>
-                        <button class="banner-btn">Shop Now</button>
-                    </div>
+    <!-- Authentication Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="authForm">
+                <h2>Welcome to New Journey Shop</h2>
+                <div class="auth-tabs">
+                    <button class="tab-btn active" data-tab="login">Login</button>
+                    <button class="tab-btn" data-tab="register">Register</button>
                 </div>
-            </section>
-
-            <!-- Products Section -->
-            <section class="products-section">
-                <h2 class="section-title">Featured Products</h2>
-                <div class="products-grid" id="productsGrid">
-                    <!-- Products will be loaded here -->
-                </div>
-            </section>
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-logo">
-                    <i class="fas fa-shopping-bag"></i>
-                    <span>New Journey Shop</span>
-                </div>
-                <p class="footer-text">© 2023 New Journey Shop. All rights reserved.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Login Modal -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Login / Register</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="loginForm">
+                
+                <!-- Login Form -->
+                <form id="loginForm" class="auth-form active-form">
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="loginEmail" required>
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="loginPassword" required>
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password" required>
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
-                    <p class="form-switch">Don't have an account? <a href="#" id="switchToRegister">Register</a></p>
+                    <button type="submit" class="btn-primary">Login</button>
+                    <p class="auth-switch">Don't have an account? <a href="#" id="showRegister">Register here</a></p>
                 </form>
-                <form id="registerForm" style="display: none;">
+                
+                <!-- Register Form -->
+                <form id="registerForm" class="auth-form">
                     <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="registerName" required>
+                        <label for="registerName">Full Name</label>
+                        <input type="text" id="registerName" placeholder="Enter your full name" required>
                     </div>
                     <div class="form-group">
-                        <label>Email</label>
-                        <input type="email" id="registerEmail" required>
+                        <label for="registerEmail">Email</label>
+                        <input type="email" id="registerEmail" placeholder="Enter your email" required>
                     </div>
                     <div class="form-group">
-                        <label>Password</label>
-                        <input type="password" id="registerPassword" required>
+                        <label for="registerPassword">Password</label>
+                        <input type="password" id="registerPassword" placeholder="Create a password (min 6 characters)" required minlength="6">
                     </div>
-                    <button type="submit" class="btn btn-primary">Register</button>
-                    <p class="form-switch">Already have an account? <a href="#" id="switchToLogin">Login</a></p>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input type="password" id="confirmPassword" placeholder="Confirm your password" required minlength="6">
+                    </div>
+                    <button type="submit" class="btn-primary">Create Account</button>
+                    <p class="auth-switch">Already have an account? <a href="#" id="showLogin">Login here</a></p>
                 </form>
+                
+                <div id="authMessage" class="auth-message"></div>
             </div>
         </div>
     </div>
 
     <!-- Product Details Modal -->
-    <div class="modal-overlay" id="productModal">
-        <div class="modal product-modal">
-            <div class="modal-header">
-                <h3 id="modalProductName">Product Name</h3>
-                <button class="close-modal">&times;</button>
+    <div id="productModal" class="modal">
+        <div class="modal-content product-modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="productDetails" class="product-details-container">
+                <!-- Product details will be loaded here dynamically -->
             </div>
-            <div class="modal-body">
-                <div class="product-modal-content">
-                    <div class="product-modal-image">
-                        <img id="modalProductImage" src="" alt="Product Image">
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminPanel" class="admin-panel">
+        <div class="admin-content">
+            <div class="admin-header">
+                <h3><i class="fas fa-cogs"></i> Admin Panel</h3>
+                <button id="closeAdminPanel" class="btn-secondary">Close</button>
+            </div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab-btn active" data-tab="dashboard">Dashboard</button>
+                <button class="admin-tab-btn" data-tab="products">Products</button>
+                <button class="admin-tab-btn" data-tab="categories">Categories</button>
+                <button class="admin-tab-btn" data-tab="orders">Orders</button>
+                <button class="admin-tab-btn" data-tab="banners">Banners</button>
+            </div>
+            
+            <div id="adminDashboard" class="admin-tab-content active-tab">
+                <h3>Dashboard Overview</h3>
+                <div class="stats-container">
+                    <div class="stat-card">
+                        <h4>Total Products</h4>
+                        <p id="totalProducts">0</p>
                     </div>
-                    <div class="product-modal-details">
-                        <div class="product-price-modal">
-                            <span class="current-price" id="modalCurrentPrice">৳ 0</span>
-                            <span class="original-price" id="modalOriginalPrice">৳ 0</span>
-                            <span class="discount-badge" id="modalDiscount">0% OFF</span>
-                        </div>
-                        <div class="product-description" id="modalDescription">
-                            Product description will appear here.
-                        </div>
-                        <div class="product-actions-modal">
-                            <div class="quantity-control">
-                                <button class="qty-btn minus">-</button>
-                                <input type="number" class="qty-input" value="1" min="1">
-                                <button class="qty-btn plus">+</button>
-                            </div>
-                            <div class="action-buttons">
-                                <button class="btn btn-cart" id="addToCartModal">
-                                    <i class="fas fa-cart-plus"></i> Add to Cart
-                                </button>
-                                <button class="btn btn-buy" id="buyNowModal">
-                                    <i class="fas fa-bolt"></i> Buy Now
-                                </button>
-                            </div>
-                        </div>
+                    <div class="stat-card">
+                        <h4>Total Orders</h4>
+                        <p id="totalOrders">0</p>
                     </div>
+                    <div class="stat-card">
+                        <h4>Total Users</h4>
+                        <p id="totalUsers">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Total Revenue</h4>
+                        <p id="totalRevenue">৳0</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="adminProducts" class="admin-tab-content">
+                <h3>Product Management</h3>
+                <button id="addProductBtn" class="btn-primary"><i class="fas fa-plus"></i> Add New Product</button>
+                <div id="productList" class="product-list-admin">
+                    <!-- Products will be loaded here -->
+                </div>
+            </div>
+            
+            <div id="adminCategories" class="admin-tab-content">
+                <h3>Category Management</h3>
+                <div class="add-category-form">
+                    <input type="text" id="categoryName" placeholder="Category Name">
+                    <button id="addCategoryBtn" class="btn-primary">Add Category</button>
+                </div>
+                <div id="categoryList" class="category-list-admin">
+                    <!-- Categories will be loaded here -->
+                </div>
+            </div>
+            
+            <div id="adminOrders" class="admin-tab-content">
+                <h3>Order Management</h3>
+                <div id="orderList" class="order-list-admin">
+                    <!-- Orders will be loaded here -->
+                </div>
+            </div>
+            
+            <div id="adminBanners" class="admin-tab-content">
+                <h3>Banner Management</h3>
+                <div class="banner-upload">
+                    <input type="file" id="bannerImage" accept="image/*">
+                    <button id="uploadBannerBtn" class="btn-primary">Upload Banner</button>
+                </div>
+                <div id="bannerList" class="banner-list-admin">
+                    <!-- Banners will be loaded here -->
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Cart Sidebar -->
-    <div class="cart-sidebar" id="cartSidebar">
-        <div class="cart-header">
-            <h3>Your Shopping Cart</h3>
-            <button class="close-cart">&times;</button>
-        </div>
-        <div class="cart-items" id="cartItems">
-            <!-- Cart items will appear here -->
-            <div class="empty-cart">
-                <i class="fas fa-shopping-cart"></i>
-                <p>Your cart is empty</p>
-            </div>
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span class="total-price">৳ 0</span>
-            </div>
-            <button class="btn btn-checkout" id="checkoutBtn">Proceed to Checkout</button>
-        </div>
-    </div>
-
-    <!-- Checkout Modal -->
-    <div class="modal-overlay" id="checkoutModal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>Checkout</h3>
-                <button class="close-modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="checkoutForm">
-                    <div class="form-group">
-                        <label>Full Name</label>
-                        <input type="text" id="checkoutName" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Phone Number</label>
-                        <input type="tel" id="checkoutPhone" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Address</label>
-                        <textarea id="checkoutAddress" rows="3" required></textarea>
-                    </div>
-                    <div class="order-summary">
-                        <h4>Order Summary</h4>
-                        <div id="orderSummary">
-                            <!-- Order items will appear here -->
-                        </div>
-                        <div class="order-total">
-                            <span>Total:</span>
-                            <span class="total-amount">৳ 0</span>
-                        </div>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block">Place Order</button>
-                </form>
-            </div>
+    <!-- Add/Edit Product Modal -->
+    <div id="productFormModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h3 id="productFormTitle">Add New Product</h3>
+            <form id="productForm">
+                <input type="hidden" id="productId">
+                <div class="form-group">
+                    <label for="productTitle">Product Title</label>
+                    <input type="text" id="productTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="productPrice">Price (৳)</label>
+                    <input type="number" id="productPrice" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="productDiscount">Discount (%)</label>
+                    <input type="number" id="productDiscount" min="0" max="100" value="0">
+                </div>
+                <div class="form-group">
+                    <label for="productCategory">Category</label>
+                    <select id="productCategory" required>
+                        <option value="">Select Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="productRating">Rating (1-5)</label>
+                    <input type="number" id="productRating" min="1" max="5" step="0.1" value="4.0">
+                </div>
+                <div class="form-group">
+                    <label for="productDescription">Description</label>
+                    <textarea id="productDescription" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="productImage">Product Image URL</label>
+                    <input type="text" id="productImage" placeholder="Enter image URL">
+                    <small>Or upload an image:</small>
+                    <input type="file" id="imageUpload" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label for="productStatus">Status</label>
+                    <select id="productStatus">
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Save Product</button>
+            </form>
         </div>
     </div>
 
-    <!-- Success Message -->
-    <div class="success-message" id="successMessage">
-        <i class="fas fa-check-circle"></i>
-        <p>Order placed successfully!</p>
+    <!-- Main Website Container -->
+    <div class="container">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <p><i class="fas fa-map-marker-alt"></i> Deliver to: <span id="userLocation">Bangladesh</span></p>
+            </div>
+            <div class="header-right">
+                <a href="#" id="downloadApp"><i class="fas fa-mobile-alt"></i> Download App</a>
+                <span class="separator">|</span>
+                <a href="#" id="sellOnSite"><i class="fas fa-store"></i> Sell on New Journey Shop</a>
+                <span class="separator">|</span>
+                <a href="#" id="helpCenter"><i class="fas fa-question-circle"></i> Help & Support</a>
+                <span class="separator">|</span>
+                <div class="language-currency">
+                    <select id="languageSelect">
+                        <option value="en">English</option>
+                        <option value="bn">বাংলা</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Navbar -->
+        <nav class="navbar">
+            <div class="nav-container">
+                <!-- Logo -->
+                <div class="logo">
+                    <a href="#">
+                        <h1><span class="logo-text">New Journey Shop</span></h1>
+                    </a>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="search-bar">
+                    <div class="search-container">
+                        <input type="text" id="searchInput" placeholder="Search in New Journey Shop...">
+                        <button id="searchBtn" class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div class="search-suggestions" id="searchSuggestions"></div>
+                </div>
+
+                <!-- User Actions -->
+                <div class="user-actions">
+                    <div class="action-item" id="userAccount">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="userName">Account</span>
+                        <div class="dropdown" id="accountDropdown">
+                            <a href="#" id="myProfileBtn">My Profile</a>
+                            <a href="#" id="myOrdersBtn">My Orders</a>
+                            <a href="#" id="logoutBtn">Logout</a>
+                            <a href="#" id="adminLoginBtn" class="admin-only">Admin Panel</a>
+                        </div>
+                    </div>
+                    
+                    <div class="action-item">
+                        <a href="#" id="cartBtn">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span class="cart-count">Cart</span>
+                            <span id="cartCount" class="cart-badge">0</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Categories Nav -->
+        <div class="categories-nav">
+            <div class="categories-container">
+                <button class="category-btn" data-category="all">
+                    <i class="fas fa-bars"></i> All Categories
+                </button>
+                <button class="category-btn" data-category="electronics">
+                    <i class="fas fa-mobile-alt"></i> Electronics
+                </button>
+                <button class="category-btn" data-category="fashion">
+                    <i class="fas fa-tshirt"></i> Fashion
+                </button>
+                <button class="category-btn" data-category="home">
+                    <i class="fas fa-home"></i> Home & Living
+                </button>
+                <button class="category-btn" data-category="beauty">
+                    <i class="fas fa-spa"></i> Beauty & Health
+                </button>
+                <button class="category-btn" data-category="sports">
+                    <i class="fas fa-futbol"></i> Sports & Outdoors
+                </button>
+                <button class="category-btn" data-category="toys">
+                    <i class="fas fa-gamepad"></i> Toys & Games
+                </button>
+                <button class="category-btn" data-category="grocery">
+                    <i class="fas fa-shopping-basket"></i> Grocery
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Banner Slider -->
+            <section class="banner-section">
+                <div class="banner-slider">
+                    <div class="banner-slides">
+                        <!-- Banners will be loaded dynamically -->
+                    </div>
+                    <button class="slider-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+                    <button class="slider-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+                    <div class="slider-dots">
+                        <!-- Dots will be added dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Flash Sale Section -->
+            <section class="flash-sale-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> Flash Sale</h2>
+                    <div class="countdown-timer">
+                        <span>Ends in:</span>
+                        <div class="timer">
+                            <span id="hours">12</span>:<span id="minutes">30</span>:<span id="seconds">45</span>
+                        </div>
+                    </div>
+                    <a href="#" class="see-all">See All <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="flash-sale-products">
+                    <!-- Flash sale products will be loaded here -->
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section class="categories-section">
+                <div class="section-header">
+                    <h2>Categories</h2>
+                </div>
+                <div class="categories-grid" id="categoriesGrid">
+                    <!-- Categories will be loaded dynamically -->
+                </div>
+            </section>
+
+            <!-- Products Section -->
+            <section class="products-section">
+                <div class="section-header">
+                    <h2>Recommended For You</h2>
+                    <div class="sort-options">
+                        <select id="sortBy">
+                            <option value="default">Sort by</option>
+                            <option value="price-low">Price: Low to High</option>
+                            <option value="price-high">Price: High to Low</option>
+                            <option value="discount">Discount</option>
+                            <option value="rating">Rating</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                <div class="load-more">
+                    <button id="loadMoreBtn" class="btn-secondary">Load More Products</button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Cart Sidebar -->
+        <div id="cartSidebar" class="cart-sidebar">
+            <div class="cart-header">
+                <h3><i class="fas fa-shopping-cart"></i> Shopping Cart</h3>
+                <button id="closeCart" class="close-cart">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be loaded here -->
+                <div class="empty-cart">
+                    <i class="fas fa-shopping-cart"></i>
+                    <p>Your cart is empty</p>
+                </div>
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotalPrice">৳0</span>
+                </div>
+                <button id="checkoutBtn" class="btn-primary" disabled>Proceed to Checkout</button>
+            </div>
+        </div>
+        <div id="cartOverlay" class="cart-overlay"></div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-top">
+                <div class="footer-section">
+                    <h4>Customer Care</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">How to Buy</a></li>
+                        <li><a href="#">Returns & Refunds</a></li>
+                        <li><a href="#">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>New Journey Shop</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Terms & Conditions</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Payment Methods</h4>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-paypal"></i>
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Download Our App</h4>
+                    <p>Get the New Journey Shop app for better shopping experience</p>
+                    <div class="app-download">
+                        <button class="app-btn"><i class="fab fa-google-play"></i> Google Play</button>
+                        <button class="app-btn"><i class="fab fa-app-store"></i> App Store</button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2023 New Journey Shop. All rights reserved.</p>
+                <p>Designed to resemble Daraz UI/UX for educational purposes</p>
+            </div>
+        </footer>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-    <script src="firebase-config.js"></script>
-    <script src="script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
+    
+    <script src="firebase.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
